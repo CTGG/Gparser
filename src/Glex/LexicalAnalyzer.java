@@ -27,8 +27,8 @@ public class LexicalAnalyzer {
 			//1.get the first char
 			char firstChar = chars[pointer];
 			//2.1check whether it starts with character
-			System.out.println("firstchar: "+firstChar);
-			System.out.println("pointer: "+pointer);
+//			System.out.println("firstchar: "+firstChar);
+//			System.out.println("pointer: "+pointer);
 			if((firstChar>='a'&&firstChar<='z')||(firstChar>='A'&&firstChar<='Z')) {
 				//2.2check whether it is reserved words
 				boolean isReserved = true;
@@ -40,13 +40,13 @@ public class LexicalAnalyzer {
 					String word = reservedWords[i];
 					isReserved = true;
 					tempPointer = pointer;
-					System.out.println("in this loop word is"+word+" and tempPointer is "+tempPointer);
+//					System.out.println("in this loop word is"+word+" and tempPointer is "+tempPointer);
 					//2.2.2check each char in words
 					if(tempPointer+word.length()<=(charlen-tempPointer)){
 						//check each char
 						for (char c : word.toCharArray()) {
 							if (c != chars[tempPointer]) {								
-								System.out.println("c is "+c+" and i is "+tempPointer+"chars[i] is "+chars[tempPointer]);
+//								System.out.println("c is "+c+" and i is "+tempPointer+"chars[i] is "+chars[tempPointer]);
 								isReserved = false;
 								break;
 							}
@@ -63,7 +63,7 @@ public class LexicalAnalyzer {
 					}
 				}
 					if (isReserved) {
-						System.out.println("====this is reserved====");
+//						System.out.println("====this is reserved====");
 						//add this reserved word into list							
 						Token token = new Token(TokenType.RESERVED, reserveNumber, reserveWord);
 						outlist.add(token);
@@ -95,7 +95,7 @@ public class LexicalAnalyzer {
 						outlist.add(token);
 					}
 					//TODO
-					System.out.println(isReserved);
+//					System.out.println(isReserved);
 				
 				//2.3check number
 			}else if(firstChar>='0'&&firstChar<='9'){
@@ -168,7 +168,7 @@ public class LexicalAnalyzer {
 					}
 					break;
 				case '=':
-					System.out.println("===========");
+//					System.out.println("===========");
 					if(chars[next] == '='){
 						Token token = new Token(TokenType.OPERATOR, 31, "==");
 						outlist.add(token);	

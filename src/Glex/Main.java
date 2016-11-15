@@ -3,8 +3,8 @@ package Glex;
 import java.util.ArrayList;
 
 public class Main {
-	private static String filePath = "src/input.txt";
-	public ArrayList<Token> getTokens() {
+	
+	public ArrayList<Token> getTokens(String filePath) {
 		LexicalAnalyzer ana = new LexicalAnalyzer();
 		//put input lines into a list
 		ArrayList<String> list = IOHelper.readFile(filePath);
