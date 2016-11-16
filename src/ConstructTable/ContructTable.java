@@ -1,7 +1,6 @@
 package ConstructTable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +19,6 @@ public class ContructTable {
 		boolean loop = true;
 		while (loop) {
 			int beforesize = expanded.size();
-            System.out.println();
 			loop = false;
             ArrayList<LRitem> tempexpan = new ArrayList<>(expanded);
 			for (LRitem lRitem : tempexpan) {
@@ -118,6 +116,11 @@ public class ContructTable {
 			newstate.setIterms(newlist);
 			newstate.setN(newstaten);
 			states.add(newstate);
+			System.out.println("state "+newstaten);
+			for (int i = 0; i < newlist.size(); i++) {
+				System.out.println(newlist.get(i).getProductionWithDot()+" "+newlist.get(i).getPredictor());
+			}
+			System.out.println();
 			return newstaten;
 		}
 		
@@ -125,7 +128,6 @@ public class ContructTable {
 	
 	private int getStateN(ArrayList<LRitem> list) {
 		for (int i = 0; i < states.size(); i++) {
-            System.out.println();
 			boolean same = true;
             ArrayList<LRitem> existed = new ArrayList<>(states.get(i).getIterms());
             if (list.size() != existed.size()){
@@ -167,7 +169,6 @@ public class ContructTable {
                 Set<String> pros = getMatchPros(beta.charAt(0)+"");
                 for (String s:pros){
                     String two[] = s.split(":");
-                    //TODO
                     ret+=first(two[1],a);
                 }
                 return ret;
@@ -202,7 +203,6 @@ public class ContructTable {
 		grammars.add(firstpro);
 		int index = 1;
 		for (String string : graStr) {
-			System.out.println(string);
 			Production production = new Production();
 			production.setProduction(string);
 			production.setIndex(index);
@@ -231,56 +231,24 @@ public class ContructTable {
 		s0.setN(0);
 		ArrayList<LRitem> core = new ArrayList<>();
 		core.add(startPoint);
-        System.out.println("core "+core.get(0).getProductionWithDot()+" "+core.get(0).getPredictor());
         core = closure(core);
         s0.setIterms(core);
 		states.add(s0);
-		
+		System.out.println("state 0");
+		for (int i = 0; i < core.size(); i++) {
+			System.out.println(core.get(i).getProductionWithDot()+" "+core.get(i).getPredictor());
+		}
+		System.out.println();
 	}
-	
-//	
-//	private void initTable() {
-//		//init table items
-//		for (int i = 0; i < states.size(); i++) {
-//			for (String ter : terminals) {
-//				TableItem item = new TableItem();
-//				item.setStaterow(i);
-//				item.setColumn(ter);
-//				item.setValue("^");
-//				list.add(item);
-//			}
-//		}
-//		for (int i = 0; i < states.size(); i++) {
-//			for (String nonter : nonTerminals) {
-//				TableItem item = new TableItem();
-//				item.setStaterow(i);
-//				item.setColumn(nonter);
-//				item.setValue("^");
-//				list.add(item);
-//			}
-//		}
-//	}
+
 	private void construct() {
-		//TODO need a loop of all states
-//		State s0 = states.get(0);
-//		ArrayList<String> sterms = getNexts(s0);
-//		//set action shift & goto
-//		setShiftAndGoto(s0, sterms);
-//		//set r
-//		setReduce(s0);
 		int n = 0;
 		while(n<states.size()){
 			State sn = states.get(n);
 			ArrayList<String> sterms = getNexts(sn);
             ArrayList<LRitem> sta = sn.getIterms();
-            System.out.println("state "+n);
-            for (LRitem lRitem:sta){
-                System.out.println(lRitem.getProductionWithDot()+" "+lRitem.getPredictor());
-            }
 			//set action shift & goto
 			setShiftAndGoto(sn, sterms);
-			//set r
-            //TODO
 			setReduce(sn);
 			n++;
 		}
@@ -301,7 +269,6 @@ public class ContructTable {
 						n = i;
 					}
 				}
-				//set [state][column] = rn
 				setIterm(state.getN(), column, "r"+(n-1));
 			}
 			
@@ -315,7 +282,6 @@ public class ContructTable {
 			String column = next;
 			if (isNonTerminal(next)) {
 				setIterm(row, column, nextstate+"");
-                System.out.println();
 			}else {
 				setIterm(row, column, "S"+nextstate);
 			}
@@ -323,15 +289,6 @@ public class ContructTable {
 	}
 	
 	private void setIterm(int staten, String column, String value){
-//		int position = -1;
-//		for(int i = 0; i < list.size();i++){
-//			TableItem item = list.get(i);
-//			if (item.getStaterow() == staten && item.getColumn().equals(column)) {
-//				position = i;
-//			}
-//		}
-//		//TODO to be tested whether it is a copy
-//		list.get(position).setValue(value);
 		TableItem item = new TableItem();
 		item.setStaterow(staten);
 		item.setColumn(column);
@@ -360,35 +317,14 @@ public class ContructTable {
 		}
 		return terms;
 	}
-	
-//	private HashMap<String,Integer> getShift(int staten){
-//		//TODO
-//		ArrayList<String> ters = new ArrayList<>();
-//		State state = states.get(staten);
-//		for (LRitem lRitem : state.getIterms()) {
-//			String right = lRitem.getRight();
-//			
-//		}
-//		return null;
-//	}
+
 	public static void main(String[] args) {
 		ContructTable c = new ContructTable();
 		c.init();
-		System.out.println("init completed");
         State s0 = c.states.get(0);
-
-
 		c.construct();
-        for (int i=0;i<c.states.size();i++){
-            State si =  c.states.get(i);
-            System.out.println("state "+i);
-            for(LRitem lRitem : s0.getIterms()){
-                System.out.println(lRitem.getProductionWithDot()+" "+lRitem.getPredictor());
-            }
-        }
         for (TableItem item:c.list){
             System.out.println(item.getStaterow()+ " "+item.getColumn()+" "+item.getValue());
         }
-//		System.out.println("table");
 	}
 }
