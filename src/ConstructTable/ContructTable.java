@@ -51,7 +51,7 @@ public class ContructTable {
 							if (right.length() > (dot + 2)) {
 								beta = right.substring(dot + 2);
 							}
-							newitem.setPredictor(first(beta + lRitem.getPredictor()));
+							newitem.setPredictor(first(beta,lRitem.getPredictor()));
                             boolean isnewitem = true;
                             //check whether it is new
                             for(LRitem old:expanded){
@@ -125,7 +125,20 @@ public class ContructTable {
 	
 	private int getStateN(ArrayList<LRitem> list) {
 		for (int i = 0; i < states.size(); i++) {
-			boolean same = list.equals(states.get(i).getIterms());
+            System.out.println();
+			boolean same = true;
+            ArrayList<LRitem> existed = new ArrayList<>(states.get(i).getIterms());
+            if (list.size() != existed.size()){
+                same=false;
+            }else {
+                for(int j = 0;j<list.size();j++){
+                    if (list.get(j).getProductionWithDot().equals(existed.get(j).getProductionWithDot())
+                            && list.get(j).getPredictor().equals(existed.get(j).getPredictor())){
+                    }else {
+                        same = false;
+                    }
+                }
+            }
 			if (same) {
 				return i;
 			} 
@@ -144,9 +157,26 @@ public class ContructTable {
 		return matchs;
 	}
 
-	private String first(String string) {
-		String notNull = string.replaceAll("^", "");
-		return notNull.charAt(0)+"";
+	private String first(String beta,String a) {
+        if (beta.length() == 0) {
+            return a;
+        }else {
+            boolean nt = isNonTerminal(beta.charAt(0)+"");
+            if (nt){
+                String ret = "";
+                Set<String> pros = getMatchPros(beta.charAt(0)+"");
+                for (String s:pros){
+                    String two[] = s.split(":");
+                    //TODO
+                    ret+=first(two[1],a);
+                }
+                return ret;
+            }else {
+                return beta.charAt(0)+"";
+            }
+        }
+
+
 	}
 
 	private boolean isNonTerminal(String next) {
@@ -243,12 +273,14 @@ public class ContructTable {
 			State sn = states.get(n);
 			ArrayList<String> sterms = getNexts(sn);
             ArrayList<LRitem> sta = sn.getIterms();
+            System.out.println("state "+n);
             for (LRitem lRitem:sta){
                 System.out.println(lRitem.getProductionWithDot()+" "+lRitem.getPredictor());
             }
 			//set action shift & goto
 			setShiftAndGoto(sn, sterms);
 			//set r
+            //TODO
 			setReduce(sn);
 			n++;
 		}
@@ -270,7 +302,7 @@ public class ContructTable {
 					}
 				}
 				//set [state][column] = rn
-				setIterm(state.getN(), column, "r"+n);
+				setIterm(state.getN(), column, "r"+(n-1));
 			}
 			
 		}
@@ -319,9 +351,10 @@ public class ContructTable {
 				}else {
 					next = right.substring(dot+1);
 				}
-				if (terminals.contains(next)) {
+				if (terminals.contains(next)||nonTerminals.contains(next)) {
 					terms.add(next);
 				}
+
 			}
 			
 		}
@@ -343,11 +376,16 @@ public class ContructTable {
 		c.init();
 		System.out.println("init completed");
         State s0 = c.states.get(0);
-        for(LRitem i : s0.getIterms()){
-            System.out.println(i.getProductionWithDot()+" "+i.getPredictor());
-        }
+
+
 		c.construct();
-        System.out.println(c.states.size());
+        for (int i=0;i<c.states.size();i++){
+            State si =  c.states.get(i);
+            System.out.println("state "+i);
+            for(LRitem lRitem : s0.getIterms()){
+                System.out.println(lRitem.getProductionWithDot()+" "+lRitem.getPredictor());
+            }
+        }
         for (TableItem item:c.list){
             System.out.println(item.getStaterow()+ " "+item.getColumn()+" "+item.getValue());
         }
