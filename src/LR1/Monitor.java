@@ -18,7 +18,7 @@ public class Monitor {
 	public void init(){
 		Main main = new Main();
 		String filePath = "src/input_LR1.txt";
-		//init reader
+		//init reader	
 		ArrayList<Token> tokens = main.getTokens(filePath);
 		for(Token t:tokens){
 			if (t.getType() == TokenType.ID) {

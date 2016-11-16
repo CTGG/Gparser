@@ -22,5 +22,9 @@ public class LRitem {
 	public void setPredictor(String predictor) {
 		this.predictor = predictor;
 	}
+	public String getProductionWithDot() {
+		return left+":"+right;
+	}
+	
 	
 }
